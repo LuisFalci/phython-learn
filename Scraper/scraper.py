@@ -1,57 +1,82 @@
 import requests
 from bs4 import BeautifulSoup
 import json
+import os
+import schedule
+import time
 
-url = "https://www.pciconcursos.com.br/concursos/"
-response = requests.get(url)
+def executar_scraper():
+    url = "https://www.pciconcursos.com.br/concursos/"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
 
-soup = BeautifulSoup(response.text, 'html.parser')
+    nome_arquivo = "concursos.json"
+    
+    # 1. Carregar dados existentes para evitar duplicatas
+    if os.path.exists(nome_arquivo):
+        with open(nome_arquivo, 'r', encoding='utf-8') as f:
+            lista_concursos = json.load(f)
+    else:
+        lista_concursos = []
 
-# Lista que armazenará todos os concursos para o JSON
-lista_concursos = []
-uf_atual = "Não informada"
+    # Criamos um set de links já salvos para busca rápida
+    links_existentes = {c['link'] for c in lista_concursos}
+    novos_concursos_contagem = 0
 
-# busca todas as divs com a classe especificada 
-elementos = soup.find_all('div', class_=['ua', 'na', 'ea', 'da'])
+    uf_atual = "Não informada"
+    elementos = soup.find_all('div', class_=['ua', 'na', 'ea', 'da'])
 
-# itera todos os elementos capturados acima
-for elem in elementos:
-    classes = elem.get('class', [])
+    for elem in elementos:
+        classes = elem.get('class', [])
 
-    # a div com o estado do concurso, fica fora da div com as informações. Assim, precisamos rodar sequencialmente para descobrir o estado.
-    if 'ua' in classes:
-        uf_div = elem.find('div', class_='uf')
-        if uf_div:
-            uf_atual = uf_div.text.strip()
+        if 'ua' in classes:
+            uf_div = elem.find('div', class_='uf')
+            if uf_div:
+                uf_atual = uf_div.text.strip()
+                
+        elif any(c in classes for c in ['na', 'ea', 'da']):
+            ca_div = elem.find('div', class_='ca')
+            link_tag = ca_div.find('a') if ca_div else None
+            link = link_tag['href'] if link_tag and link_tag.has_attr('href') else "Sem link"
             
-    elif any(c in classes for c in ['na', 'ea', 'da']):
-        ca_div = elem.find('div', class_='ca')
-        link_tag = ca_div.find('a') if ca_div else None
-        
-        link = link_tag['href'] if link_tag and link_tag.has_attr('href') else "Sem link"
-        titulo = link_tag.text.strip() if link_tag else "Sem título"
-        
-        detalhes_div = elem.find('div', class_='cd')
-        detalhes = detalhes_div.get_text(separator=" ").strip() if detalhes_div else "Sem detalhes"
-        
-        # Criamos um dicionário com os dados capturados
-        dados = {
-            "uf": uf_atual,
-            "status": classes[0].upper(),
-            "titulo": titulo,
-            "link": link,
-            "detalhes": detalhes
-        }
-        
-        # Adicionamos o dicionário à nossa lista
-        lista_concursos.append(dados)
+            # --- LÓGICA DE VERIFICAÇÃO ---
+            if link in links_existentes or link == "Sem link":
+                continue  # Pula se já existir ou se for inválido
 
-# --- SALVANDO O ARQUIVO JSON ---
-nome_arquivo = "concursos.json"
+            titulo = link_tag.text.strip() if link_tag else "Sem título"
+            detalhes_div = elem.find('div', class_='cd')
+            detalhes = detalhes_div.get_text(separator=" ").strip() if detalhes_div else "Sem detalhes"
+            data_inscricao = elem.find('div', class_='ce')
+            data = data_inscricao.get_text(separator=" ").strip() if data_inscricao else "Sem detalhes"
 
-with open(nome_arquivo, 'w', encoding='utf-8') as f:
-    # indent=4 deixa o arquivo legível para humanos
-    # ensure_ascii=False garante que acentos fiquem corretos
-    json.dump(lista_concursos, f, indent=4, ensure_ascii=False)
+            dados = {
+                "uf": uf_atual,
+                "status": classes[0].upper(),
+                "titulo": titulo,
+                "link": link,
+                "data": data,
+                "detalhes": detalhes
+            }
+            
+            lista_concursos.append(dados)
+            links_existentes.add(link)
+            novos_concursos_contagem += 1
 
-print(f"Sucesso! {len(lista_concursos)} concursos salvos em {nome_arquivo}")
+    # 2. Salvar apenas se houver novidades
+    if novos_concursos_contagem > 0:
+        with open(nome_arquivo, 'w', encoding='utf-8') as f:
+            json.dump(lista_concursos, f, indent=4, ensure_ascii=False)
+        print(f"Sucesso! {novos_concursos_contagem} novos concursos adicionados.")
+    else:
+        print("Nenhuma novidade encontrada.")
+
+if __name__ == "__main__":
+    executar_scraper()
+    
+# Agendar para cada 1 hora
+schedule.every(1).hours.do(executar_scraper)
+
+print("Scraper ativo. Pressione Ctrl+C para parar.")
+while True:
+    schedule.run_pending()
+    time.sleep(1)

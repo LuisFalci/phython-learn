@@ -1,0 +1,21 @@
+div#logo-box {
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/*hide button on mobile formats */
+
+.mobile .offer-enlarger-button-wrapper {
+opacity: 0 !important;  
+}
+.mobile .first-text-field-wrapper.text-table {
+width: 100% !important;     
+}
+
+.offer-button-wrapper span, .offer-enlarger-button span {
+    white-space: nowrap; width: 100%;
+}
+.logo-img {
+    max-height: 55%;
+    max-width: 60%;
+}

@@ -1,0 +1,159 @@
+#conteudo .listaap * {
+    box-sizing: border-box;
+}
+
+#conteudo .listaap {
+    background-color: #ffffff;
+    width: 100%;
+    margin: 0 auto;
+}
+
+#conteudo .listaap div.ap1 {
+}
+
+#conteudo .listaap div.ap2 {
+    clear: both;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: 100px;
+    width: 100%;
+    display: table;
+}
+
+#conteudo .listaap div.ap2:hover {
+    background-color: #f7f8f8;
+    cursor: pointer;
+}
+
+#conteudo .listaap div.ap3 {
+    min-width: 100px;
+    min-height: 140px;
+    float: left;
+    display: block;
+    text-align: center;
+}
+
+#conteudo .listaap div.ap3 img {
+    height: 140px;
+    width: 100px;
+    border: 1px solid #c0c0c0;
+    margin: 0;
+    margin-top: 5px;
+    margin-right: 10px;
+}
+
+#conteudo .listaap div.ap4 {
+    max-width: 510px;
+    min-height: 100px;
+    float: left;
+    display: block;
+}
+
+#conteudo .listaap li.aa {
+    padding: 1px 0 0 0;
+}
+
+#conteudo .listaap li.aa a {
+    font:bold 16px/22px "Inter", sans-serif;
+    color: #205c98;
+}
+
+#conteudo .listaap li.aaa a {
+    font:bold 16px/22px "Inter", sans-serif;
+    color: #205c98;
+}
+
+#conteudo .listaap li.ab {
+    padding: 1px 0;
+    font:600 14px/18px "Inter", sans-serif;
+    color: #000000;
+}
+
+#conteudo .listaap li.ac {
+    padding: 1px 0;
+    font:bold 14px/16px "Inter", sans-serif;
+    color: #999999;
+}
+
+#conteudo .listaap li.ac a {
+    color: #999999;
+}
+
+#conteudo .listaap li.ac span {
+    font-size: 12px;
+}
+
+#conteudo .listaap li.ad {
+    padding: 1px 0;
+    font:bold 17px/22px "Inter", sans-serif;
+    color: #205c98;
+}
+
+#conteudo .listaap li.ad span {
+    padding: 1px 0 1px 7px;
+    font:600 15px/15px "Inter", sans-serif;
+    color: #000000;
+    vertical-align:1px;
+}
+
+#conteudo .listaap li.ae {
+    margin-top: 5px;
+}
+
+#conteudo .listaap .btn1-ap {
+
+    background: #205c98 none;
+    color: #ffffff;
+    padding: 5px 20px;
+    font:bold 14px/16px "Inter", sans-serif;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+#conteudo .listaap .btn1-ap:hover {
+    color: #ffff00;
+    text-decoration: none;
+}
+
+@media screen and (max-width: 768px) {
+    #conteudo .listaap div.ap2 {
+        width: 100%;
+        text-align: center;
+        padding-left: 0;
+        padding-right: 0;
+        padding-top: 20px;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+
+    #conteudo .listaap div.ap3 {
+        width: 100%;
+        text-align: center;
+        float: none;
+    }
+
+    #conteudo .listaap div.ap3 img {
+        height: 252px;
+        width: 180px;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    #conteudo .listaap div.ap4 {
+        margin: 0 auto;
+        float: none;
+    }
+
+    #conteudo .listaap .btn1-ap {
+        font-size: 13;
+        padding: 10px 20px;
+    }
+
+    #conteudo .listaap li.ae {
+        margin: 10px 0 10px 0;
+    }
+
+    #conteudo .listaap .produto_volume {
+        display: none;
+    }
+}
